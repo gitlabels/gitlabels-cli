@@ -42,10 +42,20 @@ namespace Goit.GitHubLabels
             var github = new GitHubClient(new ProductHeaderValue("gitlabels.exe"), credentials);
             var repo = await github.Repository.Get(username, repoName);
             var repoLabels = await github.Issue.Labels.GetAllForRepository(username, repoName);
-            var configLabels = LoadLabelsFromConfig(options.ConfigFile);
 
             Console.WriteLine($"Syncing repository: {username}/{repoName}");
 
+            IList<NewLabel> configLabels = null;
+            if (String.IsNullOrEmpty(options.ConfigFile))
+            {
+                Console.WriteLine("Loading labels from repository...");
+                configLabels = await LoadLabelsFromRepository(github, repo);
+            }
+            else
+            {
+                Console.WriteLine("Loading labels from config file...");
+                configLabels = LoadLabelsFromConfig(options.ConfigFile);
+            }
 
             foreach (var repoLabel in repoLabels)
             {
@@ -78,6 +88,23 @@ namespace Goit.GitHubLabels
             Console.WriteLine("Done.");
         }
 
+        private static async Task<IList<NewLabel>> LoadLabelsFromRepository(IGitHubClient client, Repository repo)
+        {
+            var configFilePath = ".github/labels.json";
+            var branch = repo.DefaultBranch;
+
+            var content = await client.Repository.Content.GetAllContentsByRef(repo.Id, configFilePath, branch);
+
+            if (content.Count != 1)
+            {
+                throw new InvalidOperationException($"Failed to find file '{configFilePath}' in branch '{branch}'.");
+            }
+
+            var json = content[0].Content;
+            return ParseLabelsConfig(json);
+
+        }
+
         private static IList<NewLabel> LoadLabelsFromConfig(string configFile)
         {
             var filename = Path.GetFullPath(configFile);
@@ -87,9 +114,13 @@ namespace Goit.GitHubLabels
                 throw new InvalidOperationException($"Configuration file with labels was not found. Path: {filename}");
             }
 
-            var labels = new List<NewLabel>();
-
             var json = File.ReadAllText(filename);
+            return ParseLabelsConfig(json);
+        }
+
+        private static IList<NewLabel> ParseLabelsConfig(string json)
+        {
+            var labels = new List<NewLabel>();
             var config = JArray.Parse(json);
             foreach (var label in config.Values<JObject>())
             {
@@ -102,7 +133,6 @@ namespace Goit.GitHubLabels
 
                 var lbl = new NewLabel(name, color);
                 labels.Add(lbl);
-
             }
             return labels;
         }
