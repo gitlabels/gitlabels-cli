@@ -15,25 +15,29 @@ namespace Goit.GitHubLabels
     {
         public static int Main(string[] args)
         {
-            var options = new Options();
-            if (!Parser.Default.ParseArguments(args, options))
-            {
-                Console.WriteLine(options.GetUsage(null));
-                return Parser.DefaultExitCodeFail;
-            }
-
-            MainAsync(options).GetAwaiter().GetResult();
+            var exitCode = MainAsync(args).GetAwaiter().GetResult();
 
             if (Debugger.IsAttached)
             {
                 Console.ReadKey();
             }
 
-            return 0;
+            return exitCode;
         }
 
-        private static async Task MainAsync(Options options)
+        private static async Task<int> MainAsync(string[] args)
         {
+            var result = Parser.Default.ParseArguments<Options>(args);
+            var exitCode = await result.MapResult(
+                async (Options options) => await RunProgram(options),
+                err => Task.FromResult(1)
+            );
+
+            return exitCode;
+        }
+
+        private static async Task<int> RunProgram(Options options)
+        { 
             var tmp = options.RepositoryFullName.Split('/');
             var username = tmp[0];
             var repoName = tmp[1];
@@ -86,6 +90,7 @@ namespace Goit.GitHubLabels
             }
 
             Console.WriteLine("Done.");
+            return 0;
         }
 
         private static async Task<IList<NewLabel>> LoadLabelsFromRepository(IGitHubClient client, Repository repo)

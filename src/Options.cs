@@ -18,12 +18,5 @@ namespace Goit.GitHubLabels
 
         [Option('c', "config", Required = false, HelpText = "Configuration file with labels")]
         public string ConfigFile { get; set; }
-
-
-        [HelpVerbOption]
-        public string GetUsage(string verb)
-        {
-            return HelpText.AutoBuild(this, verb);
-        }
     }
 }
