@@ -9,6 +9,8 @@
     <Product>gitlabels</Product>
     <Description>Manage labels in GitHub repositories.</Description>
     <Copyright>Copyright © 2017 Jozef Izso</Copyright>
+    <RootNamespace>Goit.GitHubLabels</RootNamespace>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

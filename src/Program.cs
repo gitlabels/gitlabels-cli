@@ -13,25 +13,18 @@ namespace Goit.GitHubLabels
 {
     public class Program
     {
-        public static int Main(string[] args)
-        {
-            var exitCode = MainAsync(args).GetAwaiter().GetResult();
-
-            if (Debugger.IsAttached)
-            {
-                Console.ReadKey();
-            }
-
-            return exitCode;
-        }
-
-        private static async Task<int> MainAsync(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<Options>(args);
             var exitCode = await result.MapResult(
                 async (Options options) => await RunProgram(options),
                 err => Task.FromResult(1)
             );
+
+            if (Debugger.IsAttached)
+            {
+                Console.ReadKey();
+            }
 
             return exitCode;
         }
@@ -107,7 +100,6 @@ namespace Goit.GitHubLabels
 
             var json = content[0].Content;
             return ParseLabelsConfig(json);
-
         }
 
         private static IList<NewLabel> LoadLabelsFromConfig(string configFile)
