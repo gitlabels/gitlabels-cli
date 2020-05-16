@@ -35,7 +35,19 @@ namespace Goit.GitHubLabels
             var username = tmp[0];
             var repoName = tmp[1];
 
-            var credentials = new InMemoryCredentialStore(new Credentials(options.Token));
+            var token = options.Token;
+            if (String.IsNullOrWhiteSpace(token))
+            {
+                token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+            }
+
+            if (String.IsNullOrWhiteSpace(token))
+            {
+                Console.WriteLine("Provide GitHub login token with -t parameter or with GITHUB_TOKEN environment variable.");
+                return 1;
+            }
+
+            var credentials = new InMemoryCredentialStore(new Credentials(token));
             var github = new GitHubClient(new ProductHeaderValue("gitlabels.exe"), credentials);
             var repo = await github.Repository.Get(username, repoName);
             var repoLabels = await github.Issue.Labels.GetAllForRepository(username, repoName);
