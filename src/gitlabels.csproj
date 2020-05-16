@@ -3,24 +3,24 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>Jozef Izso</Authors>
     <Company>Jozef Izso</Company>
     <Product>gitlabels</Product>
     <Description>Manage labels in GitHub repositories.</Description>
-    <Copyright>Copyright © 2017 Jozef Izso</Copyright>
+    <Copyright>Copyright © 2017-2020 Jozef Izso</Copyright>
     <RootNamespace>Goit.GitHubLabels</RootNamespace>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.2.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Octokit" Version="0.29.0" />
   </ItemGroup>
 

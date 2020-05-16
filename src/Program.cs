@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CommandLine;
-using Newtonsoft.Json.Linq;
 using Octokit;
 using Octokit.Internal;
 
@@ -118,11 +118,19 @@ namespace Goit.GitHubLabels
         private static IList<NewLabel> ParseLabelsConfig(string json)
         {
             var labels = new List<NewLabel>();
-            var config = JArray.Parse(json);
-            foreach (var label in config.Values<JObject>())
+
+            var parserOptions = new JsonDocumentOptions
             {
-                var name = label["name"].Value<string>();
-                var color = label["color"].Value<string>();
+                AllowTrailingCommas = true,
+                CommentHandling = JsonCommentHandling.Skip,
+                MaxDepth = 5
+            };
+
+            using var document = JsonDocument.Parse(json, parserOptions);
+            foreach (var label in document.RootElement.EnumerateArray())
+            {
+                var name = label.GetProperty("name").GetString();
+                var color = label.GetProperty("color").GetString();
                 if (color[0] == '#')
                 {
                     color = color.Substring(1);
@@ -131,6 +139,7 @@ namespace Goit.GitHubLabels
                 var lbl = new NewLabel(name, color);
                 labels.Add(lbl);
             }
+
             return labels;
         }
     }
