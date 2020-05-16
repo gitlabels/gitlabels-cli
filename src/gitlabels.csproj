@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Version>1.1.0</Version>
     <Authors>Jozef Izso</Authors>
     <Company>Jozef Izso</Company>
@@ -11,6 +11,11 @@
     <Copyright>Copyright © 2017 Jozef Izso</Copyright>
     <RootNamespace>Goit.GitHubLabels</RootNamespace>
     <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
