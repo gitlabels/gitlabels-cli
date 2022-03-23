@@ -1,4 +1,4 @@
-name: GitLabels
+name: build
 
 on:
   push:
@@ -15,13 +15,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
+    - name: checkout
+      uses: actions/checkout@v2
+
     - name: setup dotnet
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
-    - name: Install dependencies
+
+    - name: restore
       run: dotnet restore
-    - name: Build
+
+    - name: build
       run: dotnet build --configuration ${{matrix.configuration}} --no-restore
