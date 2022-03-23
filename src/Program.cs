@@ -77,9 +77,11 @@ namespace Goit.GitHubLabels
                     continue;
                 }
 
-                if (!String.Equals(configLabel.Color, repoLabel.Color, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(configLabel.Color, repoLabel.Color, StringComparison.OrdinalIgnoreCase)
+                    || !string.Equals(configLabel.Description, repoLabel.Description, StringComparison.OrdinalIgnoreCase))
                 {
                     var update = new LabelUpdate(repoLabel.Name, configLabel.Color);
+                    update.Description = configLabel.Description;
                     await github.Issue.Labels.Update(repo.Id, repoLabel.Name, update);
                     Console.WriteLine($"  * {repoLabel.Name}");
                 }
@@ -149,6 +151,11 @@ namespace Goit.GitHubLabels
                 }
 
                 var lbl = new NewLabel(name, color);
+                if (label.TryGetProperty("description", out var descriptionProperty))
+                {
+                    lbl.Description = descriptionProperty.GetString();
+                }
+
                 labels.Add(lbl);
             }
 
